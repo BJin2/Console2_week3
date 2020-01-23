@@ -76,10 +76,9 @@ void ATPSWeapon::EndFire()
 
 void ATPSWeapon::Fire()
 {
-
 	APawn* MyOwner = Cast<APawn>(GetOwner());
 
-	if (MyOwner)
+	if (MyOwner && ammoCount > 0)
 	{
 		FVector EyeLoc;
 		FRotator EyeRot;
@@ -159,8 +158,11 @@ void ATPSWeapon::Fire()
 		{
 			PlayerController->ClientPlayCameraShake(FireCameraShake);
 		}
+
+		ammoCount--;
+		if (ammoCount == 0 && totalNumberOfBullets > 0)
+		{
+
+		}
 	}
-
-
 }
-
