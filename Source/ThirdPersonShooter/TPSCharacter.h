@@ -67,7 +67,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PlayerProperties")
 	UMaterialInterface* deathMaterial;
-	bool playReloadAnim;
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerProperties")
+	bool bPlayReloadAnimFlag;
 public:	
 	UFUNCTION(BlueprintCallable)
 	void PlayReloadAnim();
@@ -75,6 +76,7 @@ public:
 	void ReloadAnimStarted();
 	UFUNCTION(BlueprintCallable)
 	void FinishReload();
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeathSignature OnDeath;
 	// Called every frame

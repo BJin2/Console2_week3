@@ -171,6 +171,21 @@ void ATPSCharacter::DetatchWeapon()
 	CurrentWeapon->MeshComp->SetSimulatePhysics(true);
 	CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 }
+void ATPSCharacter::PlayReloadAnim()
+{
+	bPlayReloadAnimFlag = true;
+}
+void ATPSCharacter::ReloadAnimStarted()
+{
+	bPlayReloadAnimFlag = false;
+}
+void ATPSCharacter::FinishReload()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Reload();
+	}
+}
 void ATPSCharacter::OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float DeltaHealth, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (Health <= 0)

@@ -10,6 +10,7 @@
 #include "TimerManager.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "ThirdPersonShooter.h"
+#include "TPSCharacter.h"
 
 int32 DebugDrawWeapons = 0;
 
@@ -76,7 +77,7 @@ void ATPSWeapon::EndFire()
 
 void ATPSWeapon::Fire()
 {
-	APawn* MyOwner = Cast<APawn>(GetOwner());
+	ATPSCharacter* MyOwner = Cast<ATPSCharacter>(GetOwner());
 
 	if (MyOwner && ammoCount > 0)
 	{
@@ -162,7 +163,7 @@ void ATPSWeapon::Fire()
 		ammoCount--;
 		if (ammoCount == 0 && totalNumberOfBullets > 0)
 		{
-
+			MyOwner->PlayReloadAnim();
 		}
 	}
 }

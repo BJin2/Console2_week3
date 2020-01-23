@@ -63,8 +63,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (ClampMin = 0, ClampMax = 1))
 	float accuracy;
-
-	void Reload();
 //-----
 	FTimerHandle BulletTimer;
 
@@ -74,6 +72,7 @@ protected:
 	float DamageMultiplier = 4;
 
 public:	
+	void Reload();
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
 	// Called every frame
