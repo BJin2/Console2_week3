@@ -37,6 +37,21 @@ void ATPSWeapon::BeginPlay()
 	//MuzzleSocketName = "Muzzle";
 }
 
+void ATPSWeapon::Reload()
+{
+	if (totalNumberOfBullets > magazineSize)
+	{
+		ammoCount = magazineSize;
+		totalNumberOfBullets -= magazineSize;
+	}
+	else
+	{
+		ammoCount = totalNumberOfBullets;
+		totalNumberOfBullets = 0;
+	}
+	
+}
+
 // Called every frame
 void ATPSWeapon::Tick(float DeltaTime)
 {

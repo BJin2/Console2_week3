@@ -53,6 +53,9 @@ protected:
 	float fireRate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	int totalNumberOfBullets;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	int magazineSize;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
@@ -60,6 +63,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (ClampMin = 0, ClampMax = 1))
 	float accuracy;
+
+	void Reload();
 //-----
 	FTimerHandle BulletTimer;
 
