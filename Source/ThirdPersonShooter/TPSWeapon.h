@@ -72,6 +72,7 @@ protected:
 	float DamageMultiplier = 4;
 
 public:	
+	bool isAmmoFull();
 	void Reload();
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;

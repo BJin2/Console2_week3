@@ -50,6 +50,8 @@ protected:
 	void SlotWeapon1();
 	void SlotWeapon2();
 	void EquipCurrentWeapon();
+	void EquipWeapon1();
+	void EquipWeapon2();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;

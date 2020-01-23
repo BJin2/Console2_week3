@@ -39,6 +39,11 @@ void ATPSWeapon::BeginPlay()
 	//MuzzleSocketName = "Muzzle";
 }
 
+bool ATPSWeapon::isAmmoFull()
+{
+	return ammoCount == magazineSize;
+}
+
 void ATPSWeapon::Reload()
 {
 	if (totalNumberOfBullets > magazineSize)

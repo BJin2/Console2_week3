@@ -40,7 +40,7 @@ void ATPSCharacter::BeginPlay()
 		Weapon1->SetOwner(this);
 		SlotWeapon1();
 	}
-	Weapon2 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass1, spawnParams);
+	Weapon2 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass2, spawnParams);
 	if (Weapon2)
 	{
 		Weapon2->SetOwner(this);
@@ -140,6 +140,20 @@ void ATPSCharacter::EquipCurrentWeapon()
 		WeaponSocketName);
 }
 
+void ATPSCharacter::EquipWeapon1()
+{
+	CurrentWeapon = Weapon1;
+	SlotWeapon2();
+	EquipCurrentWeapon();
+}
+
+void ATPSCharacter::EquipWeapon2()
+{
+	CurrentWeapon = Weapon2;
+	SlotWeapon1();
+	EquipCurrentWeapon();
+}
+
 void ATPSCharacter::StartZoom()
 {
 	bIsAiming = true;
@@ -205,6 +219,11 @@ void ATPSCharacter::DetatchWeapon()
 }
 void ATPSCharacter::PlayReloadAnim()
 {
+	if (CurrentWeapon->isAmmoFull())
+	{
+		return;
+	}
+
 	bPlayReloadAnimFlag = true;
 }
 void ATPSCharacter::ReloadAnimStarted()
