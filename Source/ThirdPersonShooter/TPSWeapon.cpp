@@ -48,7 +48,7 @@ void ATPSWeapon::StartFire()
 {
 	if (!firing)
 	{
-		GetWorldTimerManager().SetTimer(BulletTimer, this, &ATPSWeapon::Fire, 0.5f, true, 0.0f);
+		GetWorldTimerManager().SetTimer(BulletTimer, this, &ATPSWeapon::Fire, 1.0f/fireRate, true, 0.0f);
 		firing = true;
 	}
 }
