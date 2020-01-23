@@ -35,6 +35,7 @@ ATPSWeapon::ATPSWeapon()
 void ATPSWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+	ammoCount = magazineSize;
 	//MuzzleSocketName = "Muzzle";
 }
 
