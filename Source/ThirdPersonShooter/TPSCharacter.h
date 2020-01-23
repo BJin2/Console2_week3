@@ -30,11 +30,27 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerProperties")
 	bool bIsAiming;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	TSubclassOf<ATPSWeapon> StarterWeaponClass;
+	TSubclassOf<ATPSWeapon> StarterWeaponClass1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
+	TSubclassOf<ATPSWeapon> StarterWeaponClass2;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
 	FName WeaponSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
+	FName Weapon1SlotSocketName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
+	FName Weapon2SlotSocketName;
+
 	ATPSWeapon* CurrentWeapon;
+	ATPSWeapon* Weapon1;
+	ATPSWeapon* Weapon2;
+	void SlotWeapon1();
+	void SlotWeapon2();
+	void EquipCurrentWeapon();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CoverProperties")

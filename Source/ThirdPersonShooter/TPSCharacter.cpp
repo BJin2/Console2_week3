@@ -34,13 +34,24 @@ void ATPSCharacter::BeginPlay()
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	CurrentWeapon = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass, spawnParams);
+	Weapon1 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass1, spawnParams);
+	if (Weapon1)
+	{
+		Weapon1->SetOwner(this);
+		SlotWeapon1();
+	}
+	Weapon2 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass1, spawnParams);
+	if (Weapon2)
+	{
+		Weapon2->SetOwner(this);
+		SlotWeapon2();
+	}
+
+	CurrentWeapon = Weapon1;
+
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(Cast<USceneComponent>(GetMesh()), 
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
-			WeaponSocketName);
+		EquipCurrentWeapon();
 	}
 }
 
@@ -106,6 +117,27 @@ void ATPSCharacter::BeginCrouch()
 void ATPSCharacter::EndCrouch()
 {
 	UnCrouch();
+}
+
+void ATPSCharacter::SlotWeapon1()
+{
+	Weapon1->AttachToComponent(Cast<USceneComponent>(GetMesh()),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		Weapon1SlotSocketName);
+}
+
+void ATPSCharacter::SlotWeapon2()
+{
+	Weapon2->AttachToComponent(Cast<USceneComponent>(GetMesh()),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		Weapon2SlotSocketName);
+}
+
+void ATPSCharacter::EquipCurrentWeapon()
+{
+	CurrentWeapon->AttachToComponent(Cast<USceneComponent>(GetMesh()),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		WeaponSocketName);
 }
 
 void ATPSCharacter::StartZoom()
