@@ -65,6 +65,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WeaponProperties")
 	WeaponState currentWeaponState = WeaponState::Idle;
 
+	void NextWeapon();
+	void PreviouseWeapon();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CoverProperties")
@@ -106,6 +109,8 @@ public:
 	void ReloadAnimStarted();
 	UFUNCTION(BlueprintCallable)
 	void FinishReload();
+
+	inline WeaponState GetCurrentWeaponState(){return currentWeaponState;}
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeathSignature OnDeath;

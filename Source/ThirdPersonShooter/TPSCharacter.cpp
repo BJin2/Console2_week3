@@ -113,6 +113,17 @@ void ATPSCharacter::EndCrouch()
 
 void ATPSCharacter::EquipWeaponAtCurrentSlot()
 {
+	bool weaponWasFiring;
+	if (CurrentWeapon->GetTimer().IsValid())
+	{
+		EndFire();
+		weaponWasFiring = true;
+	}
+	EquipWeaponAtSlot(currentWeaponSlot);
+	if (weaponWasFiring)
+	{
+		StartFire();
+	}
 }
 
 void ATPSCharacter::EquipWeaponAtSlot(int slot)
@@ -137,6 +148,22 @@ void ATPSCharacter::EquipWeaponAtSlot(int slot)
 
 void ATPSCharacter::FinishSwitching()
 {
+	if (currentWeaponState != WeaponState::Switching)
+		return;
+	currentWeaponState = CurrentWeapon->GetTimer().IsValid() ? WeaponState::Shooting : WeaponState::Idle;
+}
+
+void ATPSCharacter::NextWeapon()
+{
+	if (currentWeaponState == WeaponState::Idle || currentWeaponState == WeaponState::Shooting)
+	{
+		currentWeaponSlot =	(currentWeaponSlot+1) % Weapons.Num();
+		currentWeaponState = WeaponState::Switching;
+	}
+}
+
+void ATPSCharacter::PreviouseWeapon()
+{
 }
 
 void ATPSCharacter::StartZoom()
@@ -159,9 +186,10 @@ void ATPSCharacter::FireWeapon()
 
 void ATPSCharacter::StartFire()
 {
-	if (CurrentWeapon)
+	if (CurrentWeapon && currentWeaponState == WeaponState::Idle)
 	{
 		CurrentWeapon->StartFire();
+		currentWeaponState = WeaponState::Shooting;
 	}
 }
 
@@ -170,6 +198,10 @@ void ATPSCharacter::EndFire()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->EndFire();
+	}
+	if (currentWeaponState == WeaponState::Shooting)
+	{
+		currentWeaponState = WeaponState::Idle;
 	}
 }
 
@@ -204,11 +236,13 @@ void ATPSCharacter::DetatchWeapon()
 }
 void ATPSCharacter::PlayReloadAnim()
 {
-	if (CurrentWeapon->isAmmoFull())
+	if (CurrentWeapon->isAmmoFull() || 
+		((currentWeaponState != WeaponState::Idle && 
+			currentWeaponState != WeaponState::Shooting)))
 	{
 		return;
 	}
-
+	currentWeaponState = WeaponState::Reloading;
 	bPlayReloadAnimFlag = true;
 }
 void ATPSCharacter::ReloadAnimStarted()
@@ -217,10 +251,12 @@ void ATPSCharacter::ReloadAnimStarted()
 }
 void ATPSCharacter::FinishReload()
 {
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->Reload();
-	}
+	if (!CurrentWeapon ||
+		currentWeaponState != WeaponState::Reloading)
+		return;
+
+	CurrentWeapon->Reload();
+	currentWeaponState = CurrentWeapon->GetTimer().IsValid() ? WeaponState::Shooting : WeaponState::Idle;
 }
 void ATPSCharacter::OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float DeltaHealth, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {

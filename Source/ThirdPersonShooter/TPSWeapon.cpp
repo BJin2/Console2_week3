@@ -85,7 +85,7 @@ void ATPSWeapon::Fire()
 {
 	ATPSCharacter* MyOwner = Cast<ATPSCharacter>(GetOwner());
 
-	if (MyOwner && ammoCount > 0)
+	if (MyOwner && ammoCount > 0 && (MyOwner->GetCurrentWeaponState() == WeaponState::Shooting))
 	{
 		FVector EyeLoc;
 		FRotator EyeRot;
