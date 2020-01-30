@@ -32,21 +32,17 @@ protected:
 	bool bIsAiming;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	TSubclassOf<ATPSWeapon> StarterWeaponClass1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	TSubclassOf<ATPSWeapon> StarterWeaponClass2;
+	TArray<TSubclassOf<ATPSWeapon>> StarterWeaponClasses;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
 	FName WeaponSocketName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName Weapon1SlotSocketName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName Weapon2SlotSocketName;
-
 	ATPSWeapon* CurrentWeapon;
-	ATPSWeapon* Weapon1;
-	ATPSWeapon* Weapon2;
+
+	TArray<ATPSWeapon*> Weapons;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
+	TArray<FName> WeaponSlotSocketNames;
+
 	void SlotWeapon1();
 	void SlotWeapon2();
 	void EquipCurrentWeapon();
