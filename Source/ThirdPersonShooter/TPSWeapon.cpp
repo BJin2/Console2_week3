@@ -27,7 +27,8 @@ ATPSWeapon::ATPSWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Comp"));
-	RootComponent = (USceneComponent*)MeshComp;
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Comp"));
+	MeshComp->SetupAttachment(RootComponent);
 	TrailEffectParam = "BeamEnd";
 }
 
