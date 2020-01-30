@@ -45,7 +45,7 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("TakeCover", IE_Pressed, this, &ATPSPlayer::TakeCover);
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ATPSCharacter::PlayReloadAnim);
 	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, this, &ATPSPlayer::NextWeapon);
-	PlayerInputComponent->BindAction("PreviouseWeapon", IE_Pressed, this, &ATPSPlayer::PreviouseWeapon);
+	PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &ATPSPlayer::PreviousWeapon);
 }
 
 FVector ATPSPlayer::GetPawnViewLocation() const

@@ -63,10 +63,12 @@ protected:
 	void FinishSwitching();
 
 	UPROPERTY(BlueprintReadOnly, Category = "WeaponProperties")
-	WeaponState currentWeaponState = WeaponState::Idle;
+	TEnumAsByte<WeaponState> currentWeaponState = WeaponState::Idle;
 
+	UPROPERTY(BlueprintReadWrite, Category = "PlayerProperties")
+	bool bPlaySwitchAnim;
 	void NextWeapon();
-	void PreviouseWeapon();
+	void PreviousWeapon();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;

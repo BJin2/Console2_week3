@@ -124,6 +124,7 @@ void ATPSCharacter::EquipWeaponAtCurrentSlot()
 	{
 		StartFire();
 	}
+	currentWeaponState = WeaponState::Switching;
 }
 
 void ATPSCharacter::EquipWeaponAtSlot(int slot)
@@ -150,6 +151,7 @@ void ATPSCharacter::FinishSwitching()
 {
 	if (currentWeaponState != WeaponState::Switching)
 		return;
+
 	currentWeaponState = CurrentWeapon->GetTimer().IsValid() ? WeaponState::Shooting : WeaponState::Idle;
 }
 
@@ -157,13 +159,22 @@ void ATPSCharacter::NextWeapon()
 {
 	if (currentWeaponState == WeaponState::Idle || currentWeaponState == WeaponState::Shooting)
 	{
+		bPlaySwitchAnim = true;
 		currentWeaponSlot =	(currentWeaponSlot+1) % Weapons.Num();
 		currentWeaponState = WeaponState::Switching;
 	}
 }
 
-void ATPSCharacter::PreviouseWeapon()
+void ATPSCharacter::PreviousWeapon()
 {
+	if (currentWeaponState == WeaponState::Idle || currentWeaponState == WeaponState::Shooting)
+	{
+		bPlaySwitchAnim = true;
+		currentWeaponSlot--;
+		if (currentWeaponSlot < 0)
+			currentWeaponSlot = Weapons.Num() - 1;
+		currentWeaponState = WeaponState::Switching;
+	}
 }
 
 void ATPSCharacter::StartZoom()
@@ -188,8 +199,8 @@ void ATPSCharacter::StartFire()
 {
 	if (CurrentWeapon && currentWeaponState == WeaponState::Idle)
 	{
-		CurrentWeapon->StartFire();
 		currentWeaponState = WeaponState::Shooting;
+		CurrentWeapon->StartFire();
 	}
 }
 
