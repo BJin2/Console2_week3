@@ -6,6 +6,15 @@
 #include "GameFramework/Character.h"
 #include "TPSCharacter.generated.h"
 
+UENUM()
+enum class WeaponState : uint8
+{
+	Idle		UMETA(DisplayName = "Idle"),
+	Shooting	UMETA(DisplayName = "Shooting"),
+	Reloading	UMETA(DisplayName = "Reloading"),
+	Switching	UMETA(DisplayName = "Switching")
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, ATPSCharacter*, actor);
 
 class ATPSWeapon;
@@ -35,7 +44,7 @@ protected:
 	TArray<TSubclassOf<ATPSWeapon>> StarterWeaponClasses;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName WeaponSocketName;
+	FName HandSocketName;
 	ATPSWeapon* CurrentWeapon;
 
 	TArray<ATPSWeapon*> Weapons;
@@ -43,11 +52,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
 	TArray<FName> WeaponSlotSocketNames;
 
-	void SlotWeapon1();
-	void SlotWeapon2();
-	void EquipCurrentWeapon();
-	void EquipWeapon1();
-	void EquipWeapon2();
+	int currentWeaponSlot;
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeaponAtCurrentSlot();
+
+	void EquipWeaponAtSlot(int slot);
+
+	UFUNCTION(BlueprintCallable)
+	void FinishSwitching();
+
+	UPROPERTY(BlueprintReadOnly, Category = "WeaponProperties")
+	WeaponState currentWeaponState = WeaponState::Idle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;

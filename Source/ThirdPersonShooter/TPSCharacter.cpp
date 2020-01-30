@@ -34,25 +34,15 @@ void ATPSCharacter::BeginPlay()
 	FActorSpawnParameters spawnParams;
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	Weapon1 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass1, spawnParams);
-	if (Weapon1)
+	for (auto weaponClass : StarterWeaponClasses)
 	{
-		Weapon1->SetOwner(this);
-		SlotWeapon1();
-	}
-	Weapon2 = GetWorld()->SpawnActor<ATPSWeapon>(StarterWeaponClass2, spawnParams);
-	if (Weapon2)
-	{
-		Weapon2->SetOwner(this);
-		SlotWeapon2();
+		auto weapon = GetWorld()->SpawnActor<ATPSWeapon>(weaponClass, spawnParams);
+		weapon->SetOwner(this);
+		Weapons.Add(weapon);
 	}
 
-	CurrentWeapon = Weapon1;
-
-	if (CurrentWeapon)
-	{
-		EquipCurrentWeapon();
-	}
+	currentWeaponSlot = 0;
+	EquipWeaponAtSlot(currentWeaponSlot);
 }
 
 // Called every frame
@@ -119,39 +109,34 @@ void ATPSCharacter::EndCrouch()
 	UnCrouch();
 }
 
-void ATPSCharacter::SlotWeapon1()
+
+
+void ATPSCharacter::EquipWeaponAtCurrentSlot()
 {
-	Weapon1->AttachToComponent(Cast<USceneComponent>(GetMesh()),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		Weapon1SlotSocketName);
 }
 
-void ATPSCharacter::SlotWeapon2()
+void ATPSCharacter::EquipWeaponAtSlot(int slot)
 {
-	Weapon2->AttachToComponent(Cast<USceneComponent>(GetMesh()),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		Weapon2SlotSocketName);
-}
+	if (slot >= Weapons.Num())
+		return;//index out of bound
 
-void ATPSCharacter::EquipCurrentWeapon()
-{
+	for (int i = 0; i < Weapons.Num(); i++)
+	{
+		if (i != slot)
+		{
+			Weapons[i]->AttachToComponent(Cast<USceneComponent>(GetMesh()),
+				FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+				WeaponSlotSocketNames[i]);
+		}
+	}
+	CurrentWeapon = Weapons[slot];
 	CurrentWeapon->AttachToComponent(Cast<USceneComponent>(GetMesh()),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		WeaponSocketName);
+		HandSocketName);
 }
 
-void ATPSCharacter::EquipWeapon1()
+void ATPSCharacter::FinishSwitching()
 {
-	CurrentWeapon = Weapon1;
-	SlotWeapon2();
-	EquipCurrentWeapon();
-}
-
-void ATPSCharacter::EquipWeapon2()
-{
-	CurrentWeapon = Weapon2;
-	SlotWeapon1();
-	EquipCurrentWeapon();
 }
 
 void ATPSCharacter::StartZoom()
