@@ -13,6 +13,7 @@
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values
@@ -55,7 +56,7 @@ void ATPSCharacter::Tick(float DeltaTime)
 	{
 		if (bIsAiming)
 		{
-			GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+			GetMesh()->SetRelativeRotation(FRotator(0, -75, 0));
 		}
 		else
 		{
@@ -67,8 +68,23 @@ void ATPSCharacter::Tick(float DeltaTime)
 	}
 	else
 	{
-		GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+		GetMesh()->SetRelativeRotation(FRotator(0, -75, 0));
 	}
+
+	//IK
+	if (CurrentWeapon)
+	{
+		auto socketTransform = CurrentWeapon->MeshComp->GetSocketTransform("LeftHandSocket", ERelativeTransformSpace::RTS_World);
+		GetMesh()->TransformToBoneSpace("hand_r",
+			socketTransform.GetLocation(),
+			socketTransform.GetRotation().Rotator(),
+			LeftHandIKLocation,
+			LeftHandIKRotation);
+	}
+
+	//Pickup
+	FHitResult hit;
+	if(UKismetSystemLibrary::BoxTraceSingle())
 }
 
 void ATPSCharacter::MoveForward(float val)

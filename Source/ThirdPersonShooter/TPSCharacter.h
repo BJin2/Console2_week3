@@ -104,6 +104,18 @@ protected:
 	UMaterialInterface* deathMaterial;
 	UPROPERTY(BlueprintReadOnly, Category = "PlayerProperties")
 	bool bPlayReloadAnimFlag;
+
+	//IK
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FVector LeftHandIKLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FRotator LeftHandIKRotation;
+
+	//Pickup
+	ATPSWeapon* pickableWeapon;
+	TArray<AActor*> actorsToIgnoreForPickup;
+	void RefreshPickupIgnores();
+	void PickUpWeapon();
 public:	
 	UFUNCTION(BlueprintCallable)
 	void PlayReloadAnim();
