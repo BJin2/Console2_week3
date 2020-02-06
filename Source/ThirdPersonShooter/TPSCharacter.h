@@ -116,6 +116,10 @@ protected:
 	TArray<AActor*> actorsToIgnoreForPickup;
 	void RefreshPickupIgnores();
 	void PickUpWeapon();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	FVector pickupBoxHalfSize = FVector(100, 100, 200);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	float pickupDistance = 100;
 public:	
 	UFUNCTION(BlueprintCallable)
 	void PlayReloadAnim();

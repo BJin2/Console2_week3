@@ -14,6 +14,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ThirdPersonShooter.h"
 
 
 // Sets default values
@@ -44,6 +45,8 @@ void ATPSCharacter::BeginPlay()
 
 	currentWeaponSlot = 0;
 	EquipWeaponAtSlot(currentWeaponSlot);
+
+	RefreshPickupIgnores();
 }
 
 // Called every frame
@@ -84,7 +87,28 @@ void ATPSCharacter::Tick(float DeltaTime)
 
 	//Pickup
 	FHitResult hit;
-	if(UKismetSystemLibrary::BoxTraceSingle())
+	FVector EyeLoc;
+	FRotator EyeRot;
+	GetActorEyesViewPoint(EyeLoc, EyeRot);
+	if (UKismetSystemLibrary::BoxTraceSingle(this,EyeLoc + pickupBoxHalfSize.X * EyeRot.Vector(),
+		EyeLoc + pickupDistance * EyeRot.Vector(), pickupBoxHalfSize, EyeRot, 
+		PickupTraceQueryChannel, false, actorsToIgnoreForPickup, EDrawDebugTrace::ForOneFrame,
+		hit, true))
+	{
+		if (Cast<ATPSWeapon>(hit.Actor) && hit.Actor->GetOwner() == nullptr)
+		{
+			auto weapon = Cast<ATPSWeapon>(hit.Actor);
+			pickableWeapon = weapon;
+		}
+		else
+		{
+			pickableWeapon = nullptr;
+		}
+	}
+	else
+	{
+		pickableWeapon = nullptr;
+	}
 }
 
 void ATPSCharacter::MoveForward(float val)
@@ -260,6 +284,27 @@ void ATPSCharacter::DetatchWeapon()
 {
 	CurrentWeapon->MeshComp->SetSimulatePhysics(true);
 	CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+}
+void ATPSCharacter::RefreshPickupIgnores()
+{
+	actorsToIgnoreForPickup.Empty();
+	for (auto weapon : Weapons)
+	{
+		actorsToIgnoreForPickup.Add(weapon);
+	}
+}
+void ATPSCharacter::PickUpWeapon()
+{
+	if (currentWeaponState == WeaponState::Idle && pickableWeapon)
+	{
+		CurrentWeapon->SetOwner(nullptr);
+		CurrentWeapon->SetActorLocation(pickableWeapon->GetActorLocation());
+		CurrentWeapon->SetActorRotation(pickableWeapon->GetActorRotation());
+		Weapons[currentWeaponSlot] = pickableWeapon;
+		pickableWeapon->SetOwner(this);
+		EquipWeaponAtCurrentSlot();
+		RefreshPickupIgnores();
+	}
 }
 void ATPSCharacter::PlayReloadAnim()
 {
