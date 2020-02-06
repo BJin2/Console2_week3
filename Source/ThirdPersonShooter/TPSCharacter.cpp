@@ -90,7 +90,7 @@ void ATPSCharacter::Tick(float DeltaTime)
 	FVector EyeLoc;
 	FRotator EyeRot;
 	GetActorEyesViewPoint(EyeLoc, EyeRot);
-	if (UKismetSystemLibrary::BoxTraceSingle(this,EyeLoc + pickupBoxHalfSize.X * EyeRot.Vector(),
+	if (UKismetSystemLibrary::BoxTraceSingle(this,EyeLoc + pickupBoxHalfSize.X*2 * EyeRot.Vector(),
 		EyeLoc + pickupDistance * EyeRot.Vector(), pickupBoxHalfSize, EyeRot, 
 		PickupTraceQueryChannel, false, actorsToIgnoreForPickup, EDrawDebugTrace::ForOneFrame,
 		hit, true))
@@ -298,6 +298,7 @@ void ATPSCharacter::PickUpWeapon()
 	if (currentWeaponState == WeaponState::Idle && pickableWeapon)
 	{
 		CurrentWeapon->SetOwner(nullptr);
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurrentWeapon->SetActorLocation(pickableWeapon->GetActorLocation());
 		CurrentWeapon->SetActorRotation(pickableWeapon->GetActorRotation());
 		Weapons[currentWeaponSlot] = pickableWeapon;
