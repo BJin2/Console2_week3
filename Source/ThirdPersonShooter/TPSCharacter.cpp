@@ -307,6 +307,22 @@ void ATPSCharacter::PickUpWeapon()
 		RefreshPickupIgnores();
 	}
 }
+void ATPSCharacter::StartPickup()
+{
+	if (currentWeaponState == WeaponState::Idle && pickableWeapon)
+	{
+		GetWorldTimerManager().SetTimer(pickupTimer, this, &ATPSCharacter::PickUpWeapon, pickupTime, false);
+		currentWeaponState = WeaponState::PickingUp;
+	}
+}
+void ATPSCharacter::CancelPickup()
+{
+	if (currentWeaponState == WeaponState::PickingUp)
+	{
+		currentWeaponState = WeaponState::Idle;
+		GetWorldTimerManager().ClearTimer(pickupTimer);
+	}
+}
 void ATPSCharacter::PlayReloadAnim()
 {
 	if (CurrentWeapon->isAmmoFull() || 

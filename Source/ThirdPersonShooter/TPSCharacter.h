@@ -12,7 +12,8 @@ enum class WeaponState : uint8
 	Idle		UMETA(DisplayName = "Idle"),
 	Shooting	UMETA(DisplayName = "Shooting"),
 	Reloading	UMETA(DisplayName = "Reloading"),
-	Switching	UMETA(DisplayName = "Switching")
+	Switching	UMETA(DisplayName = "Switching"),
+	PickingUp		UMETA(DisplayName = "PickingUp")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, ATPSCharacter*, actor);
@@ -120,6 +121,12 @@ protected:
 	FVector pickupBoxHalfSize = FVector(100, 100, 200);
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
 	float pickupDistance = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	float pickupTime = 1.0f;
+	FTimerHandle pickupTimer;
+	virtual void StartPickup();
+	virtual void CancelPickup();
+
 public:	
 	UFUNCTION(BlueprintCallable)
 	void PlayReloadAnim();
