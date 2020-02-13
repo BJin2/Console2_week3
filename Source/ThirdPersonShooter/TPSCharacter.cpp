@@ -295,7 +295,7 @@ void ATPSCharacter::RefreshPickupIgnores()
 }
 void ATPSCharacter::PickUpWeapon()
 {
-	if (currentWeaponState == WeaponState::Idle && pickableWeapon)
+	if (currentWeaponState == WeaponState::PickingUp && pickableWeapon)
 	{
 		CurrentWeapon->SetOwner(nullptr);
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
@@ -305,6 +305,7 @@ void ATPSCharacter::PickUpWeapon()
 		pickableWeapon->SetOwner(this);
 		EquipWeaponAtSlot(currentWeaponSlot);
 		RefreshPickupIgnores();
+		currentWeaponState = WeaponState::Idle;
 	}
 }
 void ATPSCharacter::StartPickup()
