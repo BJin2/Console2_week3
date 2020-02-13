@@ -303,7 +303,7 @@ void ATPSCharacter::PickUpWeapon()
 		CurrentWeapon->SetActorRotation(pickableWeapon->GetActorRotation());
 		Weapons[currentWeaponSlot] = pickableWeapon;
 		pickableWeapon->SetOwner(this);
-		EquipWeaponAtCurrentSlot();
+		EquipWeaponAtSlot(currentWeaponSlot);
 		RefreshPickupIgnores();
 	}
 }
