@@ -20,26 +20,27 @@ ATPSPlayer::ATPSPlayer()
 void ATPSPlayer::BeginPlay()
 {
 	ATPSCharacter::BeginPlay();
-	APlayerController* controller = Cast<APlayerController>(this->GetController());
+	auto playerController = Cast<APlayerController>(this->GetController());
+
 	DamageUI = CreateWidget<UUserWidget>(GetWorld(), wDamageUISubclass);
 	if (DamageUI)
 	{
-		if(controller)
-			DamageUI->SetOwningPlayer(controller);
+		if(playerController)
+			DamageUI->SetOwningPlayer(playerController);
 		DamageUI->AddToViewport();
 	}
 	PlayerUI = CreateWidget<UUserWidget>(GetWorld(), wPlayerUISubclass);
 	if (PlayerUI)
 	{
-		if(controller)
-			PlayerUI->SetOwningPlayer(controller);
+		if(playerController)
+			PlayerUI->SetOwningPlayer(playerController);
 		PlayerUI->AddToViewport();
 	}
 	PickupUI = CreateWidget<UUserWidget>(GetWorld(), wPickupUISubclass);
 	if (PickupUI)
 	{
-		if(controller)
-			PickupUI->SetOwningPlayer(controller);
+		if(playerController)
+			PickupUI->SetOwningPlayer(playerController);
 		PickupUI->AddToViewport();
 	}
 }
