@@ -9,6 +9,7 @@
 /**
  * 
  */
+class UUserWidget;
 class UCameraComponent;
 class USpringArmComponent;
 UCLASS()
@@ -18,6 +19,8 @@ class THIRDPERSONSHOOTER_API ATPSPlayer : public ATPSCharacter
 public:
 	ATPSPlayer();
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -28,6 +31,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PlayerProperties", meta = (ClampMin = 30, ClampMax = 120))
 	float zoomedFOV;
 
+	//UI
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")
+	TSubclassOf<UUserWidget> wDamageUISubclass;
+	UUserWidget* DamageUI;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")
+	TSubclassOf<UUserWidget> wPlayerUISubclass;
+	UUserWidget* PlayerUI;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")
+	TSubclassOf<UUserWidget> wPickupUISubclass;
+	UUserWidget* PickupUI;
+	
 	virtual void StartZoom() override;
 	virtual void EndZoom() override;
 public:
