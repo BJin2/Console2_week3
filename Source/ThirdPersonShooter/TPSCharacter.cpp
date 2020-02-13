@@ -324,6 +324,10 @@ void ATPSCharacter::CancelPickup()
 		GetWorldTimerManager().ClearTimer(pickupTimer);
 	}
 }
+float ATPSCharacter::GetPickupAlpha()
+{
+	return GetWorldTimerManager().GetTimerElapsed(pickupTimer) / pickupTime;
+}
 void ATPSCharacter::PlayReloadAnim()
 {
 	if (CurrentWeapon->isAmmoFull() || 

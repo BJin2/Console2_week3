@@ -21,6 +21,10 @@ void ATPSPlayer::BeginPlay()
 {
 	ATPSCharacter::BeginPlay();
 	auto playerController = Cast<APlayerController>(this->GetController());
+	if (playerController)
+	{
+		playerController->SetOwner(this);
+	}
 
 	DamageUI = CreateWidget<UUserWidget>(GetWorld(), wDamageUISubclass);
 	if (DamageUI)
@@ -57,6 +61,29 @@ void ATPSPlayer::EndZoom()
 	CameraComp->SetFieldOfView(defaultFOV);
 }
 
+void ATPSPlayer::Tick(float DeltaTime)
+{
+	ATPSCharacter::Tick(DeltaTime);
+
+	if (pickableWeapon)
+	{
+		PickupUI->AddToViewport();
+	}
+	else
+	{
+		PickupUI->RemoveFromViewport();
+	}
+
+	if (currentWeaponState == WeaponState::Idle || currentWeaponState == WeaponState::Shooting)
+	{
+		PlayerUI->AddToViewport();
+	}
+	else
+	{
+		PlayerUI->RemoveFromViewport();
+	}
+}
+
 // Called to bind functionality to input
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -75,7 +102,8 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ATPSCharacter::PlayReloadAnim);
 	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, this, &ATPSPlayer::NextWeapon);
 	PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &ATPSPlayer::PreviousWeapon);
-	PlayerInputComponent->BindAction("PickupWeapon", IE_Pressed, this, &ATPSPlayer::PickUpWeapon);
+	PlayerInputComponent->BindAction("PickupWeapon", IE_Pressed, this, &ATPSPlayer::StartPickup);
+	PlayerInputComponent->BindAction("PickupWeapon", IE_Released, this, &ATPSPlayer::CancelPickup);
 }
 
 FVector ATPSPlayer::GetPawnViewLocation() const

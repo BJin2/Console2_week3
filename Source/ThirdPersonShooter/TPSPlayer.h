@@ -47,6 +47,7 @@ protected:
 	virtual void StartZoom() override;
 	virtual void EndZoom() override;
 public:
+	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual FVector GetPawnViewLocation() const override;

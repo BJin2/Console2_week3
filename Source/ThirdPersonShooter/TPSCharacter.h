@@ -126,6 +126,8 @@ protected:
 	FTimerHandle pickupTimer;
 	virtual void StartPickup();
 	virtual void CancelPickup();
+	UFUNCTION(BlueprintCallable)
+	float GetPickupAlpha();
 
 public:	
 	UFUNCTION(BlueprintCallable)
