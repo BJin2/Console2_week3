@@ -6,6 +6,16 @@
 #include "GameFramework/Character.h"
 #include "TPSCharacter.generated.h"
 
+UENUM()
+enum class WeaponState : uint8
+{
+	Idle		UMETA(DisplayName = "Idle"),
+	Shooting	UMETA(DisplayName = "Shooting"),
+	Reloading	UMETA(DisplayName = "Reloading"),
+	Switching	UMETA(DisplayName = "Switching"),
+	PickingUp		UMETA(DisplayName = "PickingUp")
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, ATPSCharacter*, actor);
 
 class ATPSWeapon;
@@ -32,26 +42,34 @@ protected:
 	bool bIsAiming;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	TSubclassOf<ATPSWeapon> StarterWeaponClass1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	TSubclassOf<ATPSWeapon> StarterWeaponClass2;
+	TArray<TSubclassOf<ATPSWeapon>> StarterWeaponClasses;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName WeaponSocketName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName Weapon1SlotSocketName;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
-	FName Weapon2SlotSocketName;
-
+	FName HandSocketName;
 	ATPSWeapon* CurrentWeapon;
-	ATPSWeapon* Weapon1;
-	ATPSWeapon* Weapon2;
-	void SlotWeapon1();
-	void SlotWeapon2();
-	void EquipCurrentWeapon();
-	void EquipWeapon1();
-	void EquipWeapon2();
+
+	TArray<ATPSWeapon*> Weapons;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponProperties")
+	TArray<FName> WeaponSlotSocketNames;
+
+	int currentWeaponSlot;
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeaponAtCurrentSlot();
+
+	void EquipWeaponAtSlot(int slot);
+
+	UFUNCTION(BlueprintCallable)
+	void FinishSwitching();
+
+	UPROPERTY(BlueprintReadOnly, Category = "WeaponProperties")
+	TEnumAsByte<WeaponState> currentWeaponState = WeaponState::Idle;
+
+	UPROPERTY(BlueprintReadWrite, Category = "PlayerProperties")
+	bool bPlaySwitchAnim;
+	void NextWeapon();
+	void PreviousWeapon();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CoverProperties")
 	UBoxComponent* overlappingCoverVolume;
@@ -87,6 +105,30 @@ protected:
 	UMaterialInterface* deathMaterial;
 	UPROPERTY(BlueprintReadOnly, Category = "PlayerProperties")
 	bool bPlayReloadAnimFlag;
+
+	//IK
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FVector LeftHandIKLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FRotator LeftHandIKRotation;
+
+	//Pickup
+	ATPSWeapon* pickableWeapon;
+	TArray<AActor*> actorsToIgnoreForPickup;
+	void RefreshPickupIgnores();
+	void PickUpWeapon();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	FVector pickupBoxHalfSize = FVector(100, 100, 200);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	float pickupDistance = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupProperties")
+	float pickupTime = 1.0f;
+	FTimerHandle pickupTimer;
+	virtual void StartPickup();
+	virtual void CancelPickup();
+	UFUNCTION(BlueprintCallable)
+	float GetPickupAlpha();
+
 public:	
 	UFUNCTION(BlueprintCallable)
 	void PlayReloadAnim();
@@ -94,6 +136,8 @@ public:
 	void ReloadAnimStarted();
 	UFUNCTION(BlueprintCallable)
 	void FinishReload();
+
+	inline WeaponState GetCurrentWeaponState(){return currentWeaponState;}
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnDeathSignature OnDeath;

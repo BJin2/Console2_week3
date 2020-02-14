@@ -74,6 +74,7 @@ protected:
 public:	
 	bool isAmmoFull();
 	void Reload();
+	inline FTimerHandle const& GetTimer() { return BulletTimer; }
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
 	// Called every frame
