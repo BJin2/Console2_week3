@@ -112,6 +112,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
 	FRotator LeftHandIKRotation;
 
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FVector LeftFootIKLocation;
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
+	FVector RightFootIKLocation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
+	float ikDistance = 50;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
+	float feetOffset = 12;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
+	bool applyIK;
+	FVector originalMeshLocation;
+
 	//Pickup
 	ATPSWeapon* pickableWeapon;
 	TArray<AActor*> actorsToIgnoreForPickup;

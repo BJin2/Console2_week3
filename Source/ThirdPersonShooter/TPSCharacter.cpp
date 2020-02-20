@@ -47,6 +47,8 @@ void ATPSCharacter::BeginPlay()
 	EquipWeaponAtSlot(currentWeaponSlot);
 
 	RefreshPickupIgnores();
+
+	originalMeshLocation = GetMesh()->RelativeLocation();
 }
 
 // Called every frame
@@ -83,6 +85,79 @@ void ATPSCharacter::Tick(float DeltaTime)
 			socketTransform.GetRotation().Rotator(),
 			LeftHandIKLocation,
 			LeftHandIKRotation);
+	}
+
+	//Foot IK
+	FVector leftFootTraceStart = GetMesh()->GetSocketLocation("LeftFootIKSocket");
+	FVector rightFootTraceStart = GetMesh()->GetSocketLocation("RightFootIKSocket");
+	leftFootTraceStart.Z = GetActorLocation().Z;
+	rightFootTraceStart.Z = GetActorLocation().Z;
+
+	FVector leftFootTraceEnd = leftFootTraceStart + FVector::DownVector * (GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + ikDistance);
+	FVector rightFootTraceEnd = rightFootTraceStart + FVector::DownVector * (GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + ikDistance);
+
+	FHitResult leftFootHit;
+	FHitResult rightFootHit;
+
+	bool leftFootOnGround = false;
+	bool rightFootOnGround = false;
+
+	FCollisionQueryParams querryParams;
+	querryParams.AddIgnoredActor(this);
+	if (GetWorld()->LineTraceSingleByChannel(leftFootHit, leftFootTraceStart, leftFootTraceEnd, ECollisionChannel::ECC_Visibility, querryParams))
+	{
+		leftFootOnGround = true;
+		DrawDebugLine(GetWorld(), leftFootTraceStart, leftFootHit.Location, FColor::Green, false, 2 * DeltaTime, 0, 3);
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), leftFootTraceStart, leftFootTraceEnd, FColor::Red, false, 2 * DeltaTime, 0, 3);
+	}
+
+	if (GetWorld()->LineTraceSingleByChannel(rightFootHit, rightFootTraceStart, rightFootTraceEnd, ECollisionChannel::ECC_Visibility, querryParams))
+	{
+		rightFootOnGround = true;
+		DrawDebugLine(GetWorld(), rightFootTraceStart, rightFootHit.Location, FColor::Green, false, 2 * DeltaTime, 0, 3);
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), rightFootTraceStart, rightFootTraceEnd, FColor::Red, false, 2 * DeltaTime, 0, 3);
+	}
+
+
+	if ((leftFootOnGround || rightFootOnGround) && GetVelocity().Size() < 10)
+	{
+		applyIK = true;
+		FVector newMeshPos = GetMesh()->GetComponentLocation();
+		if (leftFootOnGround != rightFootOnGround)
+		{
+			newMeshPos.Z = leftFootOnGround ? leftFootHit.Location.Z : rightFootHit.Location.Z;
+		}
+		else
+		{
+			newMeshPos.Z = FMath::Min(leftFootHit.Location.Z, rightFootHit.Location.Z);
+		}
+		
+		GetMesh()->SetWorldLocation(newMeshPos);
+
+		if (leftFootOnGround)
+		{
+			LeftFootIKLocation = GetMesh()->GetSocketLocation("LeftFootIKSocket");
+			LeftFootIKLocation.Z = leftFootHit.Location.Z + feetOffset;
+			LeftFootIKLocation = GetMesh()->GetComponentTransform().Inverse().TransformPosition(LeftFootIKLocation);
+		}
+
+		if (rightFootOnGround)
+		{
+			RightFootIKLocation = GetMesh()->GetSocketLocation("RightFootIKSocket");
+			RightFootIKLocation.Z = rightFootHit.Location.Z + feetOffset;
+			RightFootIKLocation = GetMesh()->GetComponentTransform().Inverse().TransformPosition(RightFootIKLocation);
+		}
+	}
+	else
+	{
+		applyIK = false;
+		GetMesh()->SetWorldLocation(GetTransform().TransformPosition(originalMeshLocation));
 	}
 
 	//Pickup
