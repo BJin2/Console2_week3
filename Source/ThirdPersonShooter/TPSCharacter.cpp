@@ -112,7 +112,7 @@ void ATPSCharacter::Tick(float DeltaTime)
 			FVector leftIKPosition = GetMesh()->GetSocketLocation("LeftFootIKSocket");
 			leftIKPosition.Z = leftFootHit.Z + feetOffset;
 			leftIKPosition = GetMesh()->GetComponentTransform().Inverse().TransformPosition(leftIKPosition);
-			leftFootOffset = leftIKPosition.Z - feetOffset;
+			leftFootOffset = FMath::FInterpTo(leftFootOffset, leftIKPosition.Z - feetOffset, DeltaTime, 7.0f);
 		}
 		else
 		{
@@ -124,7 +124,7 @@ void ATPSCharacter::Tick(float DeltaTime)
 			FVector rightIKPosition = GetMesh()->GetSocketLocation("RightFootIKSocket");
 			rightIKPosition.Z = rightFootHit.Z + feetOffset;
 			rightIKPosition = GetMesh()->GetComponentTransform().Inverse().TransformPosition(rightIKPosition);
-			rightFootOffset = rightIKPosition.Z - feetOffset;
+			rightFootOffset = FMath::FInterpTo(rightFootOffset, rightIKPosition.Z - feetOffset, DeltaTime, 7.0f);
 		}
 		else
 		{
