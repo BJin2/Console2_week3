@@ -65,23 +65,29 @@ void ATPSPlayer::Tick(float DeltaTime)
 {
 	ATPSCharacter::Tick(DeltaTime);
 
+	/*/
 	if (pickableWeapon)
 	{
-		PickupUI->AddToViewport();
+		if (!PickupUI->IsInViewport())
+			PickupUI->AddToViewport();
 	}
 	else
 	{
-		PickupUI->RemoveFromViewport();
+		if (PickupUI->IsInViewport())
+			PickupUI->RemoveFromViewport();
 	}
 
 	if (currentWeaponState == WeaponState::Idle || currentWeaponState == WeaponState::Shooting)
 	{
-		PlayerUI->AddToViewport();
+		if(!PlayerUI->IsInViewport())
+			PlayerUI->AddToViewport();
 	}
 	else
 	{
-		PlayerUI->RemoveFromViewport();
+		if (PlayerUI->IsInViewport())
+			PlayerUI->RemoveFromViewport();
 	}
+	//*/
 }
 
 // Called to bind functionality to input

@@ -111,19 +111,21 @@ protected:
 	FVector LeftHandIKLocation;
 	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
 	FRotator LeftHandIKRotation;
-
+	
 	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
-	FVector LeftFootIKLocation;
+	float leftFootOffset;
 	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
-	FVector RightFootIKLocation;
+	float rightFootOffset;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
-	float ikDistance = 50;
+	float ikDistance = 50.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
-	float feetOffset = 12;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "IK Properties")
+	float feetOffset = 5.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "IK Properties")
 	bool applyIK;
 	FVector originalMeshLocation;
+
+	FVector FootIKLineTrace(FName socketName, bool& hit);
 
 	//Pickup
 	ATPSWeapon* pickableWeapon;
