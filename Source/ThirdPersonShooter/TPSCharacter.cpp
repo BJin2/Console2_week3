@@ -47,6 +47,8 @@ void ATPSCharacter::BeginPlay()
 	EquipWeaponAtSlot(currentWeaponSlot);
 
 	RefreshPickupIgnores();
+
+	originalMeshLocation = GetMesh()->RelativeLocation;
 }
 
 // Called every frame
@@ -84,6 +86,58 @@ void ATPSCharacter::Tick(float DeltaTime)
 			LeftHandIKLocation,
 			LeftHandIKRotation);
 	}
+
+	//Foot IK
+	bool leftFootOnGround = false;
+	bool rightFootOnGround = false;
+
+	FVector leftFootHit = FootIKLineTrace("LeftFootIKSocket", leftFootOnGround);
+	FVector rightFootHit = FootIKLineTrace("RightFootIKSocket", rightFootOnGround);
+
+	FVector targetMeshPos = GetTransform().TransformPosition(originalMeshLocation);
+	if ((leftFootOnGround || rightFootOnGround) && GetVelocity().Size() < 10)
+	{
+		applyIK = true;
+		targetMeshPos = GetMesh()->GetComponentLocation();
+		if (leftFootOnGround != rightFootOnGround)
+		{
+			targetMeshPos.Z = leftFootOnGround ? leftFootHit.Z : rightFootHit.Z;
+		}
+		else
+		{
+			targetMeshPos.Z = FMath::Min(leftFootHit.Z, rightFootHit.Z);
+		}
+		if (leftFootOnGround)
+		{
+			FVector leftIKPosition = GetMesh()->GetSocketLocation("LeftFootIKSocket");
+			leftIKPosition.Z = leftFootHit.Z + feetOffset;
+			leftIKPosition = GetMesh()->GetComponentTransform().Inverse().TransformPosition(leftIKPosition);
+			leftFootOffset = FMath::FInterpTo(leftFootOffset, leftIKPosition.Z - feetOffset, DeltaTime, 7.0f);
+		}
+		else
+		{
+			leftFootOffset = 0.0f;
+		}
+
+		if (rightFootOnGround)
+		{
+			FVector rightIKPosition = GetMesh()->GetSocketLocation("RightFootIKSocket");
+			rightIKPosition.Z = rightFootHit.Z + feetOffset;
+			rightIKPosition = GetMesh()->GetComponentTransform().Inverse().TransformPosition(rightIKPosition);
+			rightFootOffset = FMath::FInterpTo(rightFootOffset, rightIKPosition.Z - feetOffset, DeltaTime, 7.0f);
+		}
+		else
+		{
+			rightFootOffset = 0.0f;
+		}
+	}
+	else
+	{
+		applyIK = false;
+	}
+	FVector newMeshPos = FMath::VInterpTo(GetMesh()->GetComponentLocation(), targetMeshPos, DeltaTime, 13.0f);
+	GetMesh()->SetWorldLocation(newMeshPos);
+	float bodyOffset = newMeshPos.Z - targetMeshPos.Z;
 
 	//Pickup
 	FHitResult hit;
@@ -284,6 +338,28 @@ void ATPSCharacter::DetatchWeapon()
 {
 	CurrentWeapon->MeshComp->SetSimulatePhysics(true);
 	CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+}
+FVector ATPSCharacter::FootIKLineTrace(FName socketName, bool& hit)
+{
+	FVector start = GetMesh()->GetSocketLocation(socketName);
+	start.Z = GetActorLocation().Z;
+
+	FVector end = start + FVector::DownVector * (GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + ikDistance);
+
+	FHitResult footHit;
+	FCollisionQueryParams querryParams;
+	querryParams.AddIgnoredActor(this);
+	if (GetWorld()->LineTraceSingleByChannel(footHit, start, end, ECollisionChannel::ECC_Visibility, querryParams))
+	{
+		hit = true;
+		DrawDebugLine(GetWorld(), start, footHit.Location, FColor::Green, false, 0.066f, 0, 3);
+		return footHit.Location;
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 0.066f, 0, 3);
+		return FVector::ZeroVector;
+	}
 }
 void ATPSCharacter::RefreshPickupIgnores()
 {
